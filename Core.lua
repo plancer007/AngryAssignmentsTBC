@@ -630,6 +630,37 @@ function AngryAssign:CreateIconButton(name, texture)
   return icon
 end
 
+local iconCache = nil
+local function AngryAssign_IconPicker_TextChanged(widget, event, value)
+	AngryAssign.iconpicker_scroll:ReleaseChildren()
+
+	local names = {}
+
+	local spellID = strmatch(value, '|Hspell:(%d+)|')
+	local itemID = strmatch(value, '|Hitem:(%d+):')
+
+	if spellID then
+		local path = select(3, GetSpellInfo(tonumber(spellID)))
+		tinsert(names, path)
+	elseif itemID then
+		local path = select(10, GetItemInfo(tonumber(itemID)))
+		tinsert(names, path)
+	elseif value ~= "" then
+		if not iconCache then iconCache = GetMacroIcons() end
+		local iconsFound = 0
+		local subname = value:lower()
+		for _, path in ipairs(iconCache) do
+			if path:lower():find(subname) then
+				tinsert(names, "Interface\\Icons\\"..path)
+				iconsFound = iconsFound + 1
+			end
+
+			if iconsFound >= 60 then
+				break
+			end
+		end
+	end
+
 function AngryAssign:CreateIconPicker()
   local window = AceGUI:Create("Frame")
   window:SetTitle("Insert an Icon")
@@ -1188,6 +1219,9 @@ function AngryAssign:UpdateDisplayed()
       :gsub(ci_pattern('{skull}'), "{rt8}")
       :gsub(ci_pattern('{rt([1-8])}'), "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%1:0|t" )
       :gsub(ci_pattern('{icon%s+([%w_]+)}'), "|TInterface\\Icons\\%1:0|t")
+      :gsub(ci_pattern('{icon%s+(%d+)}'), function(id)
+        return format("|T%s:0|t", select(3, GetSpellInfo(tonumber(id))) )
+    end)
       --classes
       :gsub(ci_pattern('{druid}', "|TInterface\\Icons\\classicon_druid") )
       :gsub(ci_pattern('{hunter}', "|TInterface\\Icons\\classicon_hunter") )
@@ -1198,19 +1232,21 @@ function AngryAssign:UpdateDisplayed()
       :gsub(ci_pattern('{paladin}', "|TInterface\\Icons\\classicon_paladin") )
       :gsub(ci_pattern('{shaman}', "|TInterface\\Icons\\classicon_shaman") )
       :gsub(ci_pattern('{warlock}', "|TInterface\\Icons\\classicon_warlock") )
-      --roles'  
+      --roles
       :gsub(ci_pattern('{tank}'), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:0:19:22:41|t")
       :gsub(ci_pattern('{healer}'), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:1:20|t")
       :gsub(ci_pattern('{dps}'), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:22:41|t")
       :gsub(ci_pattern('{damage}'), "{dps}")
-      --ability'  
+      --ability
+      :gsub(ci_pattern('{hero}'), "{heroism}")
+      :gsub(ci_pattern('{heroism}'), "|TInterface\\Icons\\ABILITY_Shaman_Heroism:0|t")
       :gsub(ci_pattern('{bl}', "|TInterface\\Icons\\SPELL_Nature_Bloodlust") )
       :gsub(ci_pattern('{hs}', "|TInterface\\Icons\\INV_Stone_04") )
       :gsub(ci_pattern('{healthstone}'), "{hs}")
       :gsub(ci_pattern('{bloodlust}'), "{bl}")
       :gsub(ci_pattern('{md}', "|TInterface\\Icons\\ability_hunter_misdirection") )
       :gsub(ci_pattern('{ss}', "|TInterface\\Icons\\spell_shadow_soulgem") )
-      --buffs'  
+      --buffs
       :gsub(ci_pattern('{prayer}', "|TInterface\\Icons\\spell_holy_prayeroffortitude") )
       :gsub(ci_pattern('{kings}', "|TInterface\\Icons\\spell_holy_greaterblessingofkings") )
       :gsub(ci_pattern('{might}', "|TInterface\\Icons\\spell_magic_greaterblessingofkings") )
