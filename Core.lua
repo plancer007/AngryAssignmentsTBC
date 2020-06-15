@@ -602,7 +602,7 @@ local function AngryAssign_IconPicker_Clicked(widget, event)
   if widget:GetUserData('name') then
     icon = widget:GetUserData('name')
   else
-    icon = '{icon '..strmatch(widget.image:GetTexture():lower(), "^interface\\icons\\([-_%w]+)$")..'}'
+    icon = '{icon '..strmatch(widget.image:GetTexture():lower(), "^interface\\ICONS\\([-_%w]+)$")..'}'
   end
 
   local position = AngryAssign.window.text.editbox:GetCursorPosition()
@@ -630,37 +630,6 @@ function AngryAssign:CreateIconButton(name, texture)
   return icon
 end
 
-local iconCache = nil
-local function AngryAssign_IconPicker_TextChanged(widget, event, value)
-	AngryAssign.iconpicker_scroll:ReleaseChildren()
-
-	local names = {}
-
-	local spellID = strmatch(value, '|Hspell:(%d+)|')
-	local itemID = strmatch(value, '|Hitem:(%d+):')
-
-	if spellID then
-		local path = select(3, GetSpellInfo(tonumber(spellID)))
-		tinsert(names, path)
-	elseif itemID then
-		local path = select(10, GetItemInfo(tonumber(itemID)))
-		tinsert(names, path)
-	elseif value ~= "" then
-		if not iconCache then iconCache = GetMacroIcons() end
-		local iconsFound = 0
-		local subname = value:lower()
-		for _, path in ipairs(iconCache) do
-			if path:lower():find(subname) then
-				tinsert(names, "Interface\\Icons\\"..path)
-				iconsFound = iconsFound + 1
-			end
-
-			if iconsFound >= 60 then
-				break
-			end
-		end
-	end
-
 function AngryAssign:CreateIconPicker()
   local window = AceGUI:Create("Frame")
   window:SetTitle("Insert an Icon")
@@ -685,32 +654,32 @@ function AngryAssign:CreateIconPicker()
   group:SetLayout("Flow")
   group:SetFullWidth(true)
   for i = 8, 1, -1 do 
-    group:AddChild( self:CreateIconButton("{rt"..i.."}", "Interface\\TargetingFrame\\UI-RaidTargetingIcon_"..i) )
+    group:AddChild( self:CreateIconButton("{rt"..i.."}"), "Interface\\TargetingFrame\\UI-RaidTargetingIcon_"..i)
   end
   --classes
-  group:AddChild( self:CreateIconButton("{druid}", "|TInterface\\Icons\\classicon_druid") )
-  group:AddChild( self:CreateIconButton("{hunter}", "|TInterface\\Icons\\classicon_hunter") )
-  group:AddChild( self:CreateIconButton("{rogue}", "|TInterface\\Icons\\classicon_rogue") )
-  group:AddChild( self:CreateIconButton("{mage}", "|TInterface\\Icons\\classicon_mage") )
-  group:AddChild( self:CreateIconButton("{priest}", "|TInterface\\Icons\\classicon_priest") )
-  group:AddChild( self:CreateIconButton("{warrior}", "|TInterface\\Icons\\classicon_warrior") )
-  group:AddChild( self:CreateIconButton("{paladin}", "|TInterface\\Icons\\classicon_paladin") )
-  group:AddChild( self:CreateIconButton("{shaman}", "|TInterface\\Icons\\classicon_shaman") )
-  group:AddChild( self:CreateIconButton("{warlock}", "|TInterface\\Icons\\classicon_warlock") )
+  group:AddChild( self:CreateIconButton("{druid}"), "|TInterface\\ICONS\\classicon_druid")
+  group:AddChild( self:CreateIconButton("{hunter}"), "|TInterface\\ICONS\\classicon_hunter")
+  group:AddChild( self:CreateIconButton("{rogue}"), "|TInterface\\ICONS\\classicon_rogue")
+  group:AddChild( self:CreateIconButton("{mage}"), "|TInterface\\ICONS\\classicon_mage")
+  group:AddChild( self:CreateIconButton("{priest}"), "|TInterface\\ICONS\\classicon_priest")
+  group:AddChild( self:CreateIconButton("{warrior}"), "|TInterface\\ICONS\\classicon_warrior")
+  group:AddChild( self:CreateIconButton("{paladin}"), "|TInterface\\ICONS\\classicon_paladin")
+  group:AddChild( self:CreateIconButton("{shaman}"), "|TInterface\\ICONS\\classicon_shaman")
+  group:AddChild( self:CreateIconButton("{warlock}"), "|TInterface\\ICONS\\classicon_warlock")
   --roles
-  group:AddChild( self:CreateIconButton("{tank}"), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:0:19:22:41|t")
-  group:AddChild( self:CreateIconButton("{healer}"), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:1:20|t")
-  group:AddChild( self:CreateIconButton("{dps}"), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:22:41|t")
+  group:AddChild( self:CreateIconButton("{tank}"), "|TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:0:19:22:41|t")
+  group:AddChild( self:CreateIconButton("{healer}"), "|TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:1:20|t")
+  group:AddChild( self:CreateIconButton("{dps}"), "|TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:22:41|t")
   --ability
-  group:AddChild( self:CreateIconButton("{bl}", "|TInterface\\Icons\\SPELL_Nature_Bloodlust") )
-  group:AddChild( self:CreateIconButton("{hs}", "|TInterface\\Icons\\INV_Stone_04") )
-  group:AddChild( self:CreateIconButton("{md}", "|TInterface\\Icons\\ability_hunter_misdirection") )
-  group:AddChild( self:CreateIconButton("{ss}", "|TInterface\\Icons\\spell_shadow_soulgem") )
+  group:AddChild( self:CreateIconButton("{bl}"), "|TInterface\\ICONS\\SPELL_Nature_Bloodlust")
+  group:AddChild( self:CreateIconButton("{hs}"), "|TInterface\\ICONS\\INV_Stone_04")
+  group:AddChild( self:CreateIconButton("{md}"), "|TInterface\\ICONS\\ability_hunter_misdirection")
+  group:AddChild( self:CreateIconButton("{ss}"), "|TInterface\\ICONS\\spell_shadow_soulgem")
   --buffs
-  group:AddChild( self:CreateIconButton("{prayer}", "|TInterface\\Icons\\spell_holy_prayeroffortitude") )
-  group:AddChild( self:CreateIconButton("{kings}", "|TInterface\\Icons\\spell_holy_greaterblessingofkings") )
-  group:AddChild( self:CreateIconButton("{might}", "|TInterface\\Icons\\spell_magic_greaterblessingofkings") )
-  group:AddChild( self:CreateIconButton("{int}", "|TInterface\\Icons\\spell_holy_magicalsentry") )
+  group:AddChild( self:CreateIconButton("{prayer}"), "|TInterface\\ICONS\\spell_holy_prayeroffortitude")
+  group:AddChild( self:CreateIconButton("{kings}"), "|TInterface\\ICONS\\spell_holy_greaterblessingofkings")
+  group:AddChild( self:CreateIconButton("{might}"), "|TInterface\\ICONS\\spell_magic_greaterblessingofkings")
+  group:AddChild( self:CreateIconButton("{int}"), "|TInterface\\ICONS\\spell_holy_magicalsentry")
   window:AddChild(group)
 --[[
   local heading = AceGUI:Create("Heading")
@@ -1189,7 +1158,6 @@ function AngryAssign:UpdateDisplayed()
       end
     end
     local highlightHex = self:GetConfig('highlightColor')
-    
     text = text:gsub("||", "|")
       :gsub(ci_pattern('|cblue'), "|cff049cdb")
       :gsub(ci_pattern('|cgreen'), "|cff46a546")
@@ -1218,20 +1186,17 @@ function AngryAssign:UpdateDisplayed()
       :gsub(ci_pattern('{x}'), "{rt7}")
       :gsub(ci_pattern('{skull}'), "{rt8}")
       :gsub(ci_pattern('{rt([1-8])}'), "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%1:0|t" )
-      :gsub(ci_pattern('{icon%s+(%d+)}'), function(id)
-        return format("|T%s:0|t", select(3, GetSpellInfo(tonumber(id))) )
-    end)
-      :gsub(ci_pattern('{icon%s+([%w_]+)}'), "|TInterface\\Icons\\%1:0|t")
+      :gsub(ci_pattern('{icon%s+([%w_]+)}'), "|TInterface\\ICONS\\%1:0|t")
       --classes
-      :gsub(ci_pattern('{druid}', "|TInterface\\Icons\\classicon_druid") )
-      :gsub(ci_pattern('{hunter}', "|TInterface\\Icons\\classicon_hunter") )
-      :gsub(ci_pattern('{rogue}', "|TInterface\\Icons\\classicon_rogue") )
-      :gsub(ci_pattern('{mage}', "|TInterface\\Icons\\classicon_mage") )
-      :gsub(ci_pattern('{priest}', "|TInterface\\Icons\\classicon_priest") )
-      :gsub(ci_pattern('{warrior}', "|TInterface\\Icons\\classicon_warrior") )
-      :gsub(ci_pattern('{paladin}', "|TInterface\\Icons\\classicon_paladin") )
-      :gsub(ci_pattern('{shaman}', "|TInterface\\Icons\\classicon_shaman") )
-      :gsub(ci_pattern('{warlock}', "|TInterface\\Icons\\classicon_warlock") )
+      :gsub(ci_pattern('{druid}'), "|TInterface\\ICONS\\classicon_druid|t")
+      :gsub(ci_pattern('{hunter}'), "|TInterface\\ICONS\\classicon_hunter|t")
+      :gsub(ci_pattern('{rogue}'), "|TInterface\\ICONS\\classicon_rogue|t")
+      :gsub(ci_pattern('{mage}'), "|TInterface\\ICONS\\classicon_mage|t")
+      :gsub(ci_pattern('{priest}'), "|TInterface\\ICONS\\classicon_priest|t")
+      :gsub(ci_pattern('{warrior}'), "|TInterface\\ICONS\\classicon_warrior|t")
+      :gsub(ci_pattern('{paladin}'), "|TInterface\\ICONS\\classicon_paladin|t")
+      :gsub(ci_pattern('{shaman}'), "|TInterface\\ICONS\\classicon_shaman|t")
+      :gsub(ci_pattern('{warlock}'), "|TInterface\\ICONS\\classicon_warlock|t")
       --roles
       :gsub(ci_pattern('{tank}'), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:0:19:22:41|t")
       :gsub(ci_pattern('{healer}'), "|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:0:0:0:0:64:64:20:39:1:20|t")
@@ -1239,19 +1204,18 @@ function AngryAssign:UpdateDisplayed()
       :gsub(ci_pattern('{damage}'), "{dps}")
       --ability
       :gsub(ci_pattern('{hero}'), "{heroism}")
-      :gsub(ci_pattern('{heroism}'), "|TInterface\\Icons\\ABILITY_Shaman_Heroism:0|t")
-      :gsub(ci_pattern('{bl}', "|TInterface\\Icons\\SPELL_Nature_Bloodlust") )
-      :gsub(ci_pattern('{hs}', "|TInterface\\Icons\\INV_Stone_04") )
+      :gsub(ci_pattern('{heroism}'), "|TInterface\\ICONS\\ABILITY_Shaman_Heroism:0|t")
+      :gsub(ci_pattern('{bl}'), "|TInterface\\ICONS\\SPELL_Nature_Bloodlust|t")
+      :gsub(ci_pattern('{hs}'), "|TInterface\\ICONS\\INV_Stone_04|t")
       :gsub(ci_pattern('{healthstone}'), "{hs}")
       :gsub(ci_pattern('{bloodlust}'), "{bl}")
-      :gsub(ci_pattern('{md}', "|TInterface\\Icons\\ability_hunter_misdirection") )
-      :gsub(ci_pattern('{ss}', "|TInterface\\Icons\\spell_shadow_soulgem") )
+      :gsub(ci_pattern('{md}'), "|TInterface\\ICONS\\ability_hunter_misdirection|t")
+      :gsub(ci_pattern('{ss}'), "|TInterface\\ICONS\\spell_shadow_soulgem|t")
       --buffs
-      :gsub(ci_pattern('{prayer}', "|TInterface\\Icons\\spell_holy_prayeroffortitude") )
-      :gsub(ci_pattern('{kings}', "|TInterface\\Icons\\spell_holy_greaterblessingofkings") )
-      :gsub(ci_pattern('{might}', "|TInterface\\Icons\\spell_magic_greaterblessingofkings") )
-      :gsub(ci_pattern('{int}', "|TInterface\\Icons\\spell_holy_magicalsentry") )
-    
+      :gsub(ci_pattern('{prayer}'), "|TInterface\\ICONS\\spell_holy_prayeroffortitude|t")
+      :gsub(ci_pattern('{kings}'), "|TInterface\\ICONS\\spell_holy_greaterblessingofkings|t")
+      :gsub(ci_pattern('{might}'), "|TInterface\\ICONS\\spell_magic_greaterblessingofkings|t")
+      :gsub(ci_pattern('{int}'), "|TInterface\\ICONS\\spell_holy_magicalsentry|t")
     self.display_text_up:Clear()
     self.display_text_down:Clear()
     local lines = { strsplit("\n", text) }
